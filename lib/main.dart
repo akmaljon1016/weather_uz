@@ -35,29 +35,65 @@ class _MyAppState extends State<MyApp> {
         title: Text("Ob Havo"),
       ),
       body: FutureBuilder(
-        future: getWeather("Fergana"),
+          future: getWeather("Fergana"),
           builder: (BuildContext context, AsyncSnapshot<Weather> snapshot) {
-        if (snapshot.hasData) {
-          return Center(
-            child: Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),
-              color: Colors.blue),
-              width: 100,
-              height: 100,
-              child: Column(
+            if (snapshot.hasData) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network("https:"+snapshot.data!.current!.condition!.icon.toString()),
-                  Text(snapshot.data?.current?.tempC.toString() ?? "xato")
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.blue),
+                      width: 100,
+                      height: 100,
+                      child: Column(
+                        children: [
+                          Image.network("https:" +
+                              snapshot.data!.current!.condition!.icon
+                                  .toString()),
+                          Text(snapshot.data?.current?.tempC.toString() ??
+                              "xato")
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 140,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                        itemCount: snapshot.data?.forecast?.forecastday?.length,
+                        itemBuilder: (context, index) {
+                          String? imageLink = snapshot.data?.forecast
+                              ?.forecastday?[index].day?.condition?.icon;
+                          String? temp = snapshot
+                              .data?.forecast?.forecastday?[index].day?.avgtempC
+                              .toString();
+                          return Container(
+                            margin: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.blue),
+                            width: 100,
+                            height: 100,
+                            child: Column(
+                              children: [
+                                Image.network("https:${imageLink}"),
+                                Text("${temp}")
+                              ],
+                            ),
+                          );
+                        }),
+                  )
                 ],
-              ),
-            ),
-          );
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      }),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 }
